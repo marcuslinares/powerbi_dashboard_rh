@@ -1,0 +1,10 @@
+relationship 0f13b0ea-98be-437e-ab9b-0b4b0d60abff
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dados.'Data Admissão'
+	toColumn: LocalDateTable_1c7ec8bc-ccb8-43cb-983d-4ca27528d769.Date
+
+relationship 82f8a796-186b-41bb-8667-826fda9d156a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dados.'Data Desligamento'
+	toColumn: LocalDateTable_a55e1e2a-7c49-4c58-b0d8-8eb895a95c80.Date
+

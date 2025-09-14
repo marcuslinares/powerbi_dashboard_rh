@@ -1,0 +1,51 @@
+table Medidas
+	lineageTag: c455ad17-7441-4456-9266-ae140d4f72c0
+
+	measure Admissões = COUNTROWS(Dados)
+		formatString: 0
+		lineageTag: 0b048a8d-514b-44c1-a780-b668a611beec
+
+	measure Desligamentos = CALCULATE([Admissões],Dados[Desligado]="Sim")
+		formatString: 0
+		lineageTag: a845bd08-dcd8-484c-b392-c5c096d4ca49
+
+	measure 'Folha Salarial' = SUM(Dados[Salário])
+		lineageTag: 12083a12-b07f-43cc-9d28-28544c83c506
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Turnover = DIVIDE([Desligamentos], [Admissões])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 55959444-a19d-4978-aca5-9e12ea70e0e2
+
+	measure Headcount = CALCULATE([Admissões],Dados[Desligado] = "Não")
+		formatString: 0
+		lineageTag: 9995fd7e-ccf1-420a-960e-9911fb656a37
+
+	measure 'Salario Medio' = AVERAGE(Dados[Salário])
+		lineageTag: 618670a1-65fd-444c-bbaa-34934dddbb32
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Coluna 1'
+		dataType: string
+		isHidden
+		lineageTag: 5bf7fbbc-d4fa-4f7b-b9ed-0b4aae037819
+		summarizeBy: none
+		sourceColumn: Coluna 1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+

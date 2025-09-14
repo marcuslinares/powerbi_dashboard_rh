@@ -1,0 +1,146 @@
+table Dados
+	lineageTag: eb1d8a07-6534-4c27-ac5f-2290583c305c
+
+	column Colaborador
+		dataType: string
+		lineageTag: eb0b2e5c-b540-4a3d-9c65-8b1196162300
+		summarizeBy: none
+		sourceColumn: Colaborador
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Data Admissão'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: eda29637-130c-41e2-bb33-8639e6137b64
+		summarizeBy: none
+		sourceColumn: Data Admissão
+
+		variation Variation
+			isDefault
+			relationship: 0f13b0ea-98be-437e-ab9b-0b4b0d60abff
+			defaultHierarchy: LocalDateTable_1c7ec8bc-ccb8-43cb-983d-4ca27528d769.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Gênero
+		dataType: string
+		lineageTag: 90cb2819-82f8-4171-ba49-224edfabde10
+		summarizeBy: none
+		sourceColumn: Gênero
+
+		annotation SummarizationSetBy = Automatic
+
+	column Idade
+		dataType: int64
+		formatString: 0
+		lineageTag: 2e65ad96-a86b-4c26-ae7e-8be640485dc5
+		summarizeBy: sum
+		sourceColumn: Idade
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Faixa Etária'
+		dataType: string
+		lineageTag: 4c6d0405-9bbf-45ef-8964-840104bdd0c3
+		summarizeBy: none
+		sourceColumn: Faixa Etária
+
+		annotation SummarizationSetBy = Automatic
+
+	column Etnia
+		dataType: string
+		lineageTag: 11ceac58-7027-46e1-a0c7-c424f850712b
+		summarizeBy: none
+		sourceColumn: Etnia
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unidade
+		dataType: string
+		lineageTag: e700ded3-c202-437c-bca8-dabdc427009b
+		summarizeBy: none
+		sourceColumn: Unidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column Departamento
+		dataType: string
+		lineageTag: e422ef1f-fa6c-4cb7-89d3-79e41a207d3b
+		summarizeBy: none
+		sourceColumn: Departamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column Salário
+		dataType: double
+		lineageTag: 579f5a78-1c8a-43df-adde-57fba882efc1
+		summarizeBy: sum
+		sourceColumn: Salário
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Nível
+		dataType: string
+		lineageTag: fc7f938d-806e-4ecb-9528-8fd980b1b89c
+		summarizeBy: none
+		sourceColumn: Nível
+
+		annotation SummarizationSetBy = Automatic
+
+	column Desligado
+		dataType: string
+		lineageTag: 4ae40921-d4b4-444a-9410-23ee44988bad
+		summarizeBy: none
+		sourceColumn: Desligado
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Data Desligamento'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 627c662a-70e2-417a-ac0f-ef4d8800d0be
+		summarizeBy: none
+		sourceColumn: Data Desligamento
+
+		variation Variation
+			isDefault
+			relationship: 82f8a796-186b-41bb-8667-826fda9d156a
+			defaultHierarchy: LocalDateTable_a55e1e2a-7c49-4c58-b0d8-8eb895a95c80.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Motivo
+		dataType: string
+		lineageTag: 0a01d9a3-7816-46e7-8315-5ea73d7ea68c
+		summarizeBy: none
+		sourceColumn: Motivo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dados = m
+		mode: import
+		source =
+				let
+				    Fonte = Folder.Files("C:\My-Files\Treinamentos\Linkedin\Power-BI-RH\arquivos_de_exercicios_dashboard_RH\Dados"),
+				    #"Arquivos Ocultos Filtrados1" = Table.SelectRows(Fonte, each [Attributes]?[Hidden]? <> true),
+				    #"Invocar Função Personalizada1" = Table.AddColumn(#"Arquivos Ocultos Filtrados1", "Transformar Arquivo", each #"Transformar Arquivo"([Content])),
+				    #"Colunas Renomeadas1" = Table.RenameColumns(#"Invocar Função Personalizada1", {"Name", "Nome da Origem"}),
+				    #"Outras Colunas Removidas1" = Table.SelectColumns(#"Colunas Renomeadas1", {"Nome da Origem", "Transformar Arquivo"}),
+				    #"Coluna de Tabela Expandida1" = Table.ExpandTableColumn(#"Outras Colunas Removidas1", "Transformar Arquivo", Table.ColumnNames(#"Transformar Arquivo"(#"Arquivo de Amostra"))),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Coluna de Tabela Expandida1",{{"Nome da Origem", type text}, {"Colaborador", type text}, {"Data Admissão", Int64.Type}, {"Gênero", type text}, {"Idade", Int64.Type}, {"Faixa Etária", type text}, {"Etnia", type text}, {"Unidade", type text}, {"Departamento", type text}, {"Salário", type number}, {"Nível", type text}, {"Desligado", type text}, {"Data Desligamento", type any}, {"Motivo", type any}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"Nome da Origem"}),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Colunas Removidas",{{"Data Admissão", type date}, {"Data Desligamento", type date}, {"Motivo", type text}})
+				in
+				    #"Tipo Alterado1"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
